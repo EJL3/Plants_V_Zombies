@@ -5,7 +5,8 @@ from pygame import mixer
 from abc import abstractmethod
 from . import constants as c
 
-class State():
+
+class State:
     def __init__(self):
         self.start_time = 0.0
         self.current_time = 0.0
@@ -14,16 +15,17 @@ class State():
         self.persist = {}
 
     def startup(self, current_time, persist):
-        '''abstract method'''
+        """abstract method"""
 
     def cleanup(self):
         self.done = False
         return self.persist
 
     def update(self, surface, keys, current_time):
-        '''abstract method'''
+        """abstract method"""
 
-class Control():
+
+class Control:
     def __init__(self):
         self.screen = pg.display.get_surface()
         self.done = False
@@ -31,14 +33,13 @@ class Control():
         self.fps = 60
         self.keys = pg.key.get_pressed()
         self.mouse_pos = None
-        self.mouse_click = [False, False]  #[left,right]
+        self.mouse_click = [False, False]  # [left,right]
         self.current_time = 0.0
         self.state_dict = {}
         self.state_name = None
         self.state = None
-        self.game_info = {c.CURRENT_TIME:0.0,
-                          c.LEVEL_NUM:c.START_LEVEL_NUM}
- 
+        self.game_info = {c.CURRENT_TIME: 0.0, c.LEVEL_NUM: c.START_LEVEL_NUM}
+
     def setup_states(self, state_dict, start_state):
         self.state_dict = state_dict
         self.state_name = start_state
@@ -71,7 +72,7 @@ class Control():
             elif event.type == pg.MOUSEBUTTONDOWN:
                 self.mouse_pos = pg.mouse.get_pos()
                 self.mouse_click[0], _, self.mouse_click[1] = pg.mouse.get_pressed()
-                print('pos:', self.mouse_pos, ' mouse:', self.mouse_click)
+                print("pos:", self.mouse_pos, " mouse:", self.mouse_click)
 
     def main(self):
         while not self.done:
@@ -79,24 +80,24 @@ class Control():
             self.update()
             pg.display.update()
             self.clock.tick(self.fps)
-        print('Game over')
+        print("Game over")
+
 
 def get_image(sheet, x, y, width, height, colorkey=c.BLACK, scale=1):
-        image = pg.Surface([width, height])
-        rect = image.get_rect()
+    image = pg.Surface([width, height])
+    rect = image.get_rect()
 
-        image.blit(sheet, (0, 0), (x, y, width, height))
-        image.set_colorkey(colorkey)
-        image = pg.transform.scale(image,
-                                   (int(rect.width*scale),
-                                    int(rect.height*scale)))
-        return image
+    image.blit(sheet, (0, 0), (x, y, width, height))
+    image.set_colorkey(colorkey)
+    image = pg.transform.scale(image, (int(rect.width * scale), int(rect.height * scale)))
+    return image
+
 
 def load_image_frames(directory, image_name, colorkey, accept):
     frame_list = []
     tmp = {}
-    index_start = len(image_name) + 1 
-    frame_num = 0;
+    index_start = len(image_name) + 1
+    frame_num = 0
     for pic in os.listdir(directory):
         name, ext = os.path.splitext(pic)
         if ext.lower() in accept:
@@ -107,14 +108,15 @@ def load_image_frames(directory, image_name, colorkey, accept):
             else:
                 img = img.convert()
                 img.set_colorkey(colorkey)
-            tmp[index]= img
+            tmp[index] = img
             frame_num += 1
 
     for i in range(frame_num):
         frame_list.append(tmp[i])
     return frame_list
 
-def load_all_gfx(directory, colorkey=c.WHITE, accept=('.png', '.jpg', '.bmp', '.gif')):
+
+def load_all_gfx(directory, colorkey=c.WHITE, accept=(".png", ".jpg", ".bmp", ".gif")):
     graphics = {}
     for name1 in os.listdir(directory):
         dir1 = os.path.join(directory, name1)
@@ -143,25 +145,28 @@ def load_all_gfx(directory, colorkey=c.WHITE, accept=('.png', '.jpg', '.bmp', '.
                         graphics[name] = img
     return graphics
 
+
 def loadZombieImageRect():
-    file_path = os.path.join('source', 'data', 'entity', 'zombie.json')
+    file_path = os.path.join("source", "data", "entity", "zombie.json")
     f = open(file_path)
     data = json.load(f)
     f.close()
     return data[c.ZOMBIE_IMAGE_RECT]
 
+
 def loadPlantImageRect():
-    file_path = os.path.join('source', 'data', 'entity', 'plant.json')
+    file_path = os.path.join("source", "data", "entity", "plant.json")
     f = open(file_path)
     data = json.load(f)
     f.close()
     return data[c.PLANT_IMAGE_RECT]
 
+
 pg.init()
-mixer.music.load('source\\bgm.mp3')
+mixer.music.load("source/bgm.mp3")
 mixer.music.play(-1)
 
-rz = pg.image.load('resources\\graphics\\Screen\\icon.jpg')
+rz = pg.image.load("resources/graphics/Screen/icon.jpg")
 pg.display.set_icon(rz)
 
 pg.display.set_caption(c.ORIGINAL_CAPTION)
